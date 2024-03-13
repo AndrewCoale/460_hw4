@@ -60,13 +60,10 @@
     [empty (cons new-cell empty)]))                                 ;
 
 (define (begin-hlpr [es : (Listof Exp)] [passed-env : Env] [passed-sto : Store]) ; begin helper function
-  (type-case (Listof Exp) es                                                     ;
-    [(cons f res)                                                                ;
-     (if (empty? res)                                                            ;
-         (interp f passed-env passed-sto)                                        ;
-         (with [(v-g sto-g) (interp f passed-env passed-sto)]                    ;
-               (begin-hlpr res passed-env sto-g)))]                              ;
-    [empty empty]))                                                              ;
+  (cond
+    [(empty? (rest es)) (interp (first es) passed-env passed-sto)]
+    [else (with [(v-g sto-g) (interp (first es) passed-env passed-sto)]
+                (begin-hlpr (rest es) passed-env sto-g))]))                                                       ;
 
 (define-type Result
   (v*s [v : Value] [s : Store]))
