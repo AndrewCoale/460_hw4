@@ -56,7 +56,7 @@
            (cond                                                    ;
              [(equal? l location) (cons new-cell rest-sto)]         ;
              [else (cons c (change-store new-cell rest-sto))])])])] ;
-    [empty (cons new-cell empty)]))                                  ; should this exist?
+    [empty (cons new-cell empty)]))                                 ;
 
 (define (begin-hlpr [es : (Listof Exp)] [passed-env : Env] [passed-sto : Store]) ; begin helper function
   (cond                                                                          ;
@@ -132,10 +132,12 @@
         (unboxE (idE 'b)))
   (test (parse `{set-box! b 0})
         (setboxE (idE 'b) (numE 0)))
-  ;(test (parse `{begin 1 2})
-  ;      (beginE (numE 1) (numE 2)))
   (test/exn (parse `{{+ 1 2}})
-            "invalid input"))
+            "invalid input")
+  (test (change-store (cell 115 (numV 12)) empty)
+        (list (cell 115 (numV 12))))
+  (test (change-store (cell 11 (numV 5)) (list (cell 115 (numV 12))))
+        (list (cell 115 (numV 12)) (cell 11 (numV 5)))))
 
 ;; with form ----------------------------------------
 (define-syntax-rule
